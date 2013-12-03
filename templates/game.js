@@ -161,7 +161,7 @@ function Game() {
                 50: 'Blue Platinum',
                 100: 'FDA Approved Additive',
                 159: 'Atomically Perfect',
-                250: 'Holy',
+                211: 'Holy',
                 300: 'Angelic',
                 1000: 'Nectar of The Gods',
             },
@@ -313,6 +313,18 @@ function Game() {
                 'base_cost':10000000000000,
                 'unlocked':false,
                 'sid':'b13',
+            },
+            'b_tv':{
+                'label':'The Crystal Methwork',
+                'amount':0,
+                'description':'Launder through a popular television network, included in every '
+                    + 'cable package in the galaxy',
+                'rps':10500000000000,
+                'unlock_rps':525000000,
+                'cost':120000000000000,
+                'base_cost':120000000000000,
+                'unlocked':false,
+                'sid':'b14',
             },
         },
 
@@ -1304,6 +1316,16 @@ function Game() {
                 'prereq':'alien_meth',           
                 'sid':'u50.2',               
             },
+            'u_angelic':{
+                'label':'Angelic Meth',
+                'description':'It is said that the Arch Angels of Methen prefer the taste of your meth',
+                'cost':1042100500555000,
+                'action':'widget_roi',
+                'mod':60,
+                'purchased':false,
+                'prereq':'u_holy_meth',           
+                'sid':'u50.3',               
+            },
             // Laundering
             'u_nyme_1':{
                 'label':'Insider Trading',
@@ -1672,6 +1694,42 @@ function Game() {
                 'min_time':1,
                 'sid':'a26',
             },
+            'a_playtime6':{
+                'label':'Junkie',
+                'description':'You\'ve managed a meth empire for an entire week!',
+                'property':'stats.seconds_played',
+                'required':86400*5,
+                'unlocked':false,
+                'hidden':false,
+                'value':10,
+                'group':306,
+                'min_time':1,
+                'sid':'a27',
+            },
+            'a_playtime7':{
+                'label':'Burnout',
+                'description':'You\'ve managed a meth empire for a month! Dayum!',
+                'property':'stats.seconds_played',
+                'required':86400*30,
+                'unlocked':false,
+                'hidden':false,
+                'value':10,
+                'group':307,
+                'min_time':1,
+                'sid':'a28',
+            },
+            'a_spent_million':{
+            	'label':'Kardashian',
+            	'description':'You\'ve spent your first $1,000,000!',
+            	'property':'stats.total_spent',
+            	'required':1000000,
+            	'unlocked':false,
+            	'hidden':false,
+            	'value':5,
+            	'group':308,
+            	'min_time':1,
+            	'sid':'a29',
+            },
             'cheated_cash_1':{
                 'label':'Counterfeiter',
                 'description':'You\'ve hacked in some cash',
@@ -1757,6 +1815,7 @@ function Game() {
             'seconds_played':0,
             'bought_upgrades':0,
             'total_cash':0,
+            'total_spent':0,
             'start_time':(new Date).getTime(),
         },
     };
@@ -1860,6 +1919,7 @@ function Game() {
             return false;
         } 
         pd.cash.amount -= n;
+        pd.stats.total_spent += n;
         return true;
     }
 
@@ -1868,7 +1928,7 @@ function Game() {
         $.get('/version.json',
             function(data) { 
                 if(data.data.version) {
-                    if(data.data.version != pd.version) { 
+                    if(data.data.version > pd.version) { 
                         $('#updated').show(500);
                     }
                 }
@@ -2830,14 +2890,18 @@ function Game() {
                 pd.stats.bought_upgrades += 1;
             }
         }
+        
         if(active_tab != 'misc') { return; }
         $('#hand_made_widgets').html(pretty_bigint(pd.stats.hand_made_widgets));
         $('#made_widgets').html(pretty_bigint(pd.stats.made_widgets));
         $('#sold_widgets').html(pretty_bigint(pd.stats.sold_widgets));
         $('#hand_sold_widgets').html(pretty_bigint(pd.stats.hand_sold_widgets));
         $('#total_cash').html(pretty_bigint(pd.stats.total_cash));
+        $('#total_spent').html(pretty_bigint(pd.stats.total_spent));
         $('#bought_upgrades').html(pretty_int(pd.stats.bought_upgrades));
         $('#time_played').html(pretty_int(pd.stats.seconds_played));
+        $('#click_sell_amount').html(pretty_int(pd.sell_amount));
+        $('#click_make_amount').html(pretty_int(pd.make_amount));
     }
 
     /****************************************************************************** 
